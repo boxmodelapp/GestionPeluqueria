@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-primary: #0D0D0D;
+  --background-secondary: #222222;
+  --text-primary: #F0F0F0;
+  --heading-color: #BB86FC;
+  --accent-background-color: #8A2BE2;
+  --accent-text-color: #F0F0F0;
+  --border-color: #3A3A3A;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --footer-background: #0A0A0A;
+  --social-icon-color: #F0F0F0;
+  --card-text-color: #F0F0F0;
+  --card-icon-color: #8A2BE2;
+  --promotion-text-highlight: #BB86FC;
+  --button-hover-color: #6A1AA0;
+  --form-label-color: #F0F0F0;
+  --form-input-background: #3A3A3A;
+  --form-input-text: #F0F0F0;
+  --form-input-border: #555555;
+}
+
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--accent-background-color);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--button-hover-color);
+}
+
+.glass-effect {
+  backdrop-filter: blur(10px);
+  background: rgba(34, 34, 34, 0.8);
+  border: 1px solid var(--border-color);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--heading-color), var(--accent-background-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-background-color), var(--button-hover-color));
+  color: var(--accent-text-color);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--button-hover-color), #5A1580);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px var(--shadow-color);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
