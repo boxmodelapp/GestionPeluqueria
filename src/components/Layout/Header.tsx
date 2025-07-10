@@ -55,7 +55,10 @@ const Header: React.FC<HeaderProps> = ({
   const navItems = getNavItems();
 
   const handleLogout = () => {
-    logout();
+    if (window.confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+      console.log('🚪 User confirmed logout');
+      logout();
+    }
   };
 
   const getRoleColor = (role: string) => {
