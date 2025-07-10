@@ -74,8 +74,12 @@ const AuthPage: React.FC = () => {
       } else if (authMode === 'guest') {
         await loginAsGuest(formData.name, formData.phone);
       }
+      
+      // Success - the App component will handle the redirect
+      console.log('Authentication successful!');
     } catch (error) {
       console.error('Authentication error:', error);
+      setErrors({ general: 'Error de autenticación. Por favor intenta nuevamente.' });
     }
   };
 

@@ -22,10 +22,16 @@ function App() {
   const [preSelectedService, setPreSelectedService] = useState<Service | undefined>();
   const [preSelectedStylist, setPreSelectedStylist] = useState<Stylist | undefined>();
 
+  // Debug authentication state
+  console.log('App render - isAuthenticated:', isAuthenticated, 'user:', user);
+
   // Show auth page if user is not authenticated
   if (!isAuthenticated) {
+    console.log('Showing AuthPage because user is not authenticated');
     return <AuthPage />;
   }
+  
+  console.log('User is authenticated, showing main app');
 
   const handleViewChange = (view: string) => {
     setCurrentView(view);

@@ -4,12 +4,20 @@ import { AuthUser } from '../types';
 export const useAuth = () => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     // Check if user is already logged in (localStorage)
     const savedUser = localStorage.getItem('salon_user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        localStorage.removeItem('salon_user');
+      }
     }
   }, []);
 
@@ -29,6 +37,8 @@ export const useAuth = () => {
       } else if (email.includes('stylist') || email.includes('peluquero')) {
         role = 'stylist';
         name = 'Peluquero Demo';
+      } else {
+        name = 'Cliente Demo';
       }
       
       const mockUser: AuthUser = {
@@ -40,8 +50,12 @@ export const useAuth = () => {
       };
       
       setUser(mockUser);
+      setIsAuthenticated(true);
       localStorage.setItem('salon_user', JSON.stringify(mockUser));
       return mockUser;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -62,8 +76,12 @@ export const useAuth = () => {
       };
       
       setUser(newUser);
+      setIsAuthenticated(true);
       localStorage.setItem('salon_user', JSON.stringify(newUser));
       return newUser;
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -84,8 +102,12 @@ export const useAuth = () => {
       };
       
       setUser(guestUser);
+      setIsAuthenticated(true);
       localStorage.setItem('salon_user', JSON.stringify(guestUser));
       return guestUser;
+    } catch (error) {
+      console.error('Guest login error:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -93,6 +115,7 @@ export const useAuth = () => {
 
   const logout = () => {
     setUser(null);
+    setIsAuthenticated(false);
     localStorage.removeItem('salon_user');
   };
 
@@ -103,6 +126,6 @@ export const useAuth = () => {
     register,
     loginAsGuest,
     logout,
-    isAuthenticated: !!user
+    isAuthenticated
   };
 };
