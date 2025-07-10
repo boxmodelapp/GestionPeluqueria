@@ -114,9 +114,11 @@ export const useAuth = () => {
   };
 
   const logout = () => {
+    console.log('🚪 Logging out user...');
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem('salon_user');
+    console.log('✅ User logged out successfully');
   };
 
   return {

@@ -25,6 +25,17 @@ function App() {
   // Debug authentication state
   console.log('App render - isAuthenticated:', isAuthenticated, 'user:', user);
 
+  // Reset view when user logs out
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      setCurrentView('home');
+      setIsMobileMenuOpen(false);
+      setShowSuccessModal(false);
+      setPreSelectedService(undefined);
+      setPreSelectedStylist(undefined);
+    }
+  }, [isAuthenticated]);
+
   // Show auth page if user is not authenticated
   if (!isAuthenticated) {
     console.log('Showing AuthPage because user is not authenticated');
