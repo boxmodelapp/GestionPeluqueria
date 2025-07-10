@@ -349,6 +349,18 @@ const AuthPage: React.FC = () => {
                 </button>
               </div>
             )}
+
+            {/* Demo Credentials */}
+            {authMode === 'login' && (
+              <div className="mt-6 p-4 bg-gray-800/50 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-300 mb-2">Cuentas de prueba:</h4>
+                <div className="text-xs text-gray-400 space-y-1">
+                  <div><strong>Admin:</strong> admin@salon.com / password</div>
+                  <div><strong>Peluquero:</strong> peluquero@salon.com / password</div>
+                  <div><strong>Cliente:</strong> cliente@salon.com / password</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

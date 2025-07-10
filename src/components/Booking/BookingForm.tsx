@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Service, Stylist, TimeSlot } from '../../types';
 import { services, stylists } from '../../data/mockData';
 import { useAppointments } from '../../hooks/useAppointments';
+import { useAuth } from '../../hooks/useAuth';
 import { Calendar, Clock, User, Phone, Mail, MessageSquare } from 'lucide-react';
 
 interface BookingFormProps {
@@ -16,11 +17,12 @@ const BookingForm: React.FC<BookingFormProps> = ({
   preSelectedStylist 
 }) => {
   const { createAppointment, getAvailableTimeSlots, loading } = useAppointments();
+  const { user } = useAuth();
   
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
     serviceIds: preSelectedService ? [preSelectedService.id] : [],
     stylistId: preSelectedStylist?.id || '',
     date: '',
@@ -64,8 +66,8 @@ const BookingForm: React.FC<BookingFormProps> = ({
     e.preventDefault();
     
     try {
-      await createAppointment({
-        clientId: '1', // Mock client ID
+      const newAppointment = await createAppointment({
+        clientId: user?.id || 'guest',
         stylistId: formData.stylistId,
         serviceIds: formData.serviceIds,
         date: formData.date,
@@ -73,12 +75,16 @@ const BookingForm: React.FC<BookingFormProps> = ({
         status: 'pending',
         notes: formData.notes,
         totalPrice,
-        duration: totalDuration
+        duration: totalDuration,
+        clientName: formData.name,
+        clientPhone: formData.phone
       });
       
+      console.log('Appointment created:', newAppointment);
       onSuccess();
     } catch (error) {
       console.error('Error creating appointment:', error);
+      alert('Error al crear la cita. Por favor intenta nuevamente.');
     }
   };
 
@@ -92,7 +98,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
   const canProceedToStep2 = formData.serviceIds.length > 0;
   const canProceedToStep3 = canProceedToStep2 && formData.stylistId;
-  const canSubmit = canProceedToStep3 && formData.date && formData.time && formData.name && formData.email && formData.phone;
+  const canSubmit = canProceedToStep3 && formData.date && formData.time && formData.name && formData.phone;
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -335,20 +341,6 @@ const BookingForm: React.FC<BookingFormProps> = ({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    <Mail className="w-4 h-4 inline mr-2" />
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     <Phone className="w-4 h-4 inline mr-2" />
                     Teléfono
                   </label>
@@ -361,7 +353,22 @@ const BookingForm: React.FC<BookingFormProps> = ({
                   />
                 </div>
 
-                <div>
+                {!user?.isGuest && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <Mail className="w-4 h-4 inline mr-2" />
+                      Email (Opcional)
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                )}
+
+                <div className={!user?.isGuest ? '' : 'md:col-span-2'}>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     <MessageSquare className="w-4 h-4 inline mr-2" />
                     Notas (Opcional)

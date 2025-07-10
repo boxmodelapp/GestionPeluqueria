@@ -1,18 +1,38 @@
 import { useState, useEffect } from 'react';
 import { Appointment, TimeSlot } from '../types';
-import { mockAppointments } from '../data/mockData';
+import { useAuth } from './useAuth';
 
 export const useAppointments = () => {
-  const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
+  const { user } = useAuth();
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Load appointments from localStorage on mount
+  useEffect(() => {
+    const savedAppointments = localStorage.getItem('salon_appointments');
+    if (savedAppointments) {
+      setAppointments(JSON.parse(savedAppointments));
+    }
+  }, []);
+
+  // Save appointments to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('salon_appointments', JSON.stringify(appointments));
+  }, [appointments]);
 
   const createAppointment = async (appointment: Omit<Appointment, 'id'>) => {
     setLoading(true);
     try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       const newAppointment: Appointment = {
         ...appointment,
         id: Date.now().toString(),
+        clientName: user?.name || 'Cliente',
+        clientPhone: user?.phone || 'Sin teléfono'
       };
+      
       setAppointments(prev => [...prev, newAppointment]);
       return newAppointment;
     } finally {
@@ -23,6 +43,9 @@ export const useAppointments = () => {
   const updateAppointment = async (id: string, updates: Partial<Appointment>) => {
     setLoading(true);
     try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       setAppointments(prev =>
         prev.map(apt => apt.id === id ? { ...apt, ...updates } : apt)
       );
@@ -61,8 +84,22 @@ export const useAppointments = () => {
     return timeSlots;
   };
 
+  // Filter appointments based on user role
+  const getUserAppointments = () => {
+    if (!user) return [];
+    
+    if (user.role === 'admin') {
+      return appointments; // Admin sees all appointments
+    } else if (user.role === 'stylist') {
+      return appointments.filter(apt => apt.stylistId === user.id);
+    } else {
+      return appointments.filter(apt => apt.clientId === user.id);
+    }
+  };
+
   return {
-    appointments,
+    appointments: getUserAppointments(),
+    allAppointments: appointments, // For admin use
     loading,
     createAppointment,
     updateAppointment,
